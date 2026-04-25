@@ -1,0 +1,16 @@
+# Bearer tokens for contractor MCP access.
+#
+# Format: <token>: <contractor-name>
+#
+# - Tokens are read on every request, so revocation is instant: edit this
+#   file and the next request from that token returns 401. No restart.
+# - Generate tokens with `scripts/issue-token.sh <contractor>`. They look
+#   like 32-byte URL-safe random strings.
+# - Real file lives at /etc/mrc-refresh-mcp/tokens.yml on the bastion,
+#   root-owned, mode 0600. NEVER commit real tokens to git.
+# - The contractor name appears in the audit log alongside every refresh.
+
+# Example entries (replace with real ones):
+#
+# Hh3vL...redacted...PqZ9: anton
+# 9kL2m...redacted...Tv7q: future-contractor

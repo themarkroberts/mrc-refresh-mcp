@@ -1,0 +1,20 @@
+mcp.markroberts.io {
+	# Generous timeouts: a full refresh can take 10+ minutes on first pull.
+	reverse_proxy 127.0.0.1:8765 {
+		transport http {
+			read_timeout 30m
+			write_timeout 30m
+			dial_timeout 10s
+		}
+	}
+
+	encode gzip
+
+	log {
+		output file /var/log/caddy/mcp.markroberts.io.log {
+			roll_size 10mb
+			roll_keep 10
+		}
+		format json
+	}
+}

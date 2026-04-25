@@ -1,0 +1,34 @@
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+concurrency:
+  group: deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Pull, install deps, restart service on bastion
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.BASTION_HOST }}
+          username: deploy
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          # Sudoers entry on the bastion permits this exact command without password.
+          # See README "GitHub Actions auto-deploy" for the setup steps.
+          script: |
+            set -euo pipefail
+            cd /opt/mrc-refresh-mcp
+            git fetch --quiet origin
+            git reset --hard --quiet origin/main
+            ./venv/bin/pip install --quiet -r requirements.txt
+            sudo /bin/systemctl restart mrc-refresh-mcp
+            sleep 2
+            sudo /bin/systemctl is-active --quiet mrc-refresh-mcp
+            curl -fsS http://127.0.0.1:8765/healthz
