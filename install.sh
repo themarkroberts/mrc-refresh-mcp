@@ -58,18 +58,24 @@ sudo -u mrc "$APP_DIR/venv/bin/pip" install --quiet --upgrade pip
 sudo -u mrc "$APP_DIR/venv/bin/pip" install --quiet -r "$APP_DIR/requirements.txt"
 
 log "5/8 setting up $CONFIG_DIR and tokens file"
+# Owned by root (only root can write/issue tokens), group-readable by mrc
+# (so the service user can load tokens.yml on every request). Mode 0750/0640
+# keeps "world" out entirely.
 mkdir -p "$CONFIG_DIR"
-chmod 0700 "$CONFIG_DIR"
+chown root:mrc "$CONFIG_DIR"
+chmod 0750 "$CONFIG_DIR"
 if [[ ! -f "$TOKENS_FILE" ]]; then
 	cat > "$TOKENS_FILE" <<'EOF'
 # Bearer token -> contractor name. See tokens.example.yml in the repo.
 # Issue a new token with: /opt/mrc-refresh-mcp/scripts/issue-token.sh <name>
 EOF
-	chmod 0600 "$TOKENS_FILE"
 	log "    created empty $TOKENS_FILE — issue tokens with scripts/issue-token.sh"
 else
 	log "    $TOKENS_FILE already exists — leaving alone"
 fi
+# Always re-assert ownership/mode in case a previous install left them wrong.
+chown root:mrc "$TOKENS_FILE"
+chmod 0640 "$TOKENS_FILE"
 
 log "6/8 installing systemd unit"
 install -m 0644 "$APP_DIR/deploy/mrc-refresh-mcp.service" "/etc/systemd/system/$SERVICE_NAME.service"
