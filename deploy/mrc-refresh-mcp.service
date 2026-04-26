@@ -11,7 +11,7 @@ WorkingDirectory=/opt/mrc-refresh-mcp
 Environment=PATH=/opt/mrc-refresh-mcp/venv/bin:/usr/local/bin:/usr/bin:/bin
 Environment=TOKENS_PATH=/etc/mrc-refresh-mcp/tokens.yml
 Environment=AUDIT_LOG=/home/mrc/mrc-proxy/logs/contractor-access.log
-Environment=MRC_REFRESH_BIN=/usr/local/bin/mrc-refresh
+Environment=MRC_REFRESH_BIN=/home/mrc/mrc-proxy/bin/mrc-refresh
 ExecStart=/opt/mrc-refresh-mcp/venv/bin/uvicorn server:app --host 127.0.0.1 --port 8765 --timeout-keep-alive 120
 Restart=on-failure
 RestartSec=5

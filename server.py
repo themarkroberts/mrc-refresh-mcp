@@ -39,7 +39,7 @@ logging.basicConfig(
 
 TOKENS_PATH = Path(os.environ.get("TOKENS_PATH", "/etc/mrc-refresh-mcp/tokens.yml"))
 AUDIT_LOG = Path(os.environ.get("AUDIT_LOG", "/home/mrc/mrc-proxy/logs/contractor-access.log"))
-MRC_REFRESH = os.environ.get("MRC_REFRESH_BIN", "/usr/local/bin/mrc-refresh")
+MRC_REFRESH = os.environ.get("MRC_REFRESH_BIN", "/home/mrc/mrc-proxy/bin/mrc-refresh")
 
 ALLOWED_SITES = {"canoefp", "gormanbros", "mrmikes", "pathways", "selkirkcedar", "similkameen"}
 ALLOWED_MODES = {"full", "files-only", "db-only", "dry-run"}

@@ -24,7 +24,7 @@ die() { printf "\033[1;31m[error]\033[0m %s\n" "$*" >&2; exit 1; }
 [[ $EUID -eq 0 ]] || die "must run as root"
 command -v apt-get >/dev/null || die "this script assumes Debian/Ubuntu (apt-get not found)"
 id mrc >/dev/null 2>&1 || die "user 'mrc' does not exist — is this the right server?"
-[[ -x /usr/local/bin/mrc-refresh ]] || warn "/usr/local/bin/mrc-refresh not found or not executable — service will start, but refreshes will fail until that exists"
+[[ -x /home/mrc/mrc-proxy/bin/mrc-refresh ]] || warn "/home/mrc/mrc-proxy/bin/mrc-refresh not found or not executable — service will start, but refreshes will fail until that exists"
 
 log "1/8 installing system packages (python3, venv, git, curl)"
 export DEBIAN_FRONTEND=noninteractive
