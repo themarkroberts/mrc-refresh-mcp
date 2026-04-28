@@ -28,6 +28,11 @@ jobs:
             git fetch --quiet origin
             git reset --hard --quiet origin/main
             ./venv/bin/pip install --quiet -r requirements.txt
+            # Sync Caddyfile if it changed (sudoer below permits these exact commands).
+            if ! sudo /usr/bin/cmp -s deploy/Caddyfile /etc/caddy/Caddyfile; then
+              sudo /usr/bin/install -m 0644 deploy/Caddyfile /etc/caddy/Caddyfile
+              sudo /bin/systemctl reload caddy
+            fi
             sudo /bin/systemctl restart mrc-refresh-mcp
             sleep 2
             sudo /bin/systemctl is-active --quiet mrc-refresh-mcp
