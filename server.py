@@ -49,7 +49,7 @@ AUDIT_LOG = Path(os.environ.get("AUDIT_LOG", "/home/mrc/mrc-proxy/logs/contracto
 MRC_REFRESH = os.environ.get("MRC_REFRESH_BIN", "/home/mrc/mrc-proxy/bin/mrc-refresh")
 PUBLIC_BASE_URL = os.environ.get("PUBLIC_BASE_URL", "https://mcp.markroberts.io").rstrip("/")
 
-ALLOWED_SITES = {"canoefp", "gormanbros", "mrmikes", "pathways", "selkirkcedar", "similkameen"}
+ALLOWED_SITES = {"canoefp", "cavallo", "gormanbros", "mrmikes", "pathways", "selkirkcedar", "similkameen"}
 ALLOWED_MODES = {"full", "files-only", "db-only", "dry-run"}
 PROGRESS_RE = re.compile(r"^\[(\d+)/(\d+)\]")
 
@@ -136,7 +136,7 @@ async def refresh_site(site: str, mode: str = "full", ctx: Context | None = None
     mid-task if there is in-progress wp-admin configuration on dev.
 
     Args:
-        site: One of canoefp, gormanbros, mrmikes, pathways, selkirkcedar, similkameen.
+        site: One of canoefp, cavallo, gormanbros, mrmikes, pathways, selkirkcedar, similkameen.
         mode: One of "full" (default), "files-only", "db-only", "dry-run".
             "full" pulls both files and DB. "dry-run" reports what would change.
     """
