@@ -19,7 +19,7 @@ RestartSec=5
 NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=read-only
-ReadWritePaths=/home/mrc/mrc-proxy/logs /home/mrc/mrc-proxy/cache
+ReadWritePaths=/home/mrc/mrc-proxy/logs /home/mrc/mrc-proxy/cache /home/mrc/mrc-proxy/tmp
 PrivateTmp=true
 
 [Install]
