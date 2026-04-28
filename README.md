@@ -57,7 +57,7 @@ Prints a token like `Hh3vL...PqZ9`. Copy it once and share via 1Password (one-ti
 Contractor adds a remote MCP server in Claude Desktop:
 
 - **Name:** `mrc-refresh`
-- **URL:** `https://mcp.markroberts.io/`
+- **URL:** `https://mcp.markroberts.io/mcp/`  *(trailing slash matters; the bare domain redirects here)*
 - **Auth header:** `Authorization: Bearer <their-token>`
 
 After the connector is added, they can say things like "refresh canoefp" or "list available sites" and Claude will call the appropriate tool.

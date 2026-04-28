@@ -88,16 +88,29 @@ class BearerAuthMiddleware(BaseHTTPMiddleware):
         if request.url.path == "/healthz":
             return await call_next(request)
 
+        # Per RFC 6750: a Bearer-protected resource MUST advertise the scheme
+        # in WWW-Authenticate on 401. MCP connector validators look for this
+        # to know how to ask the user for credentials.
+        challenge = {"WWW-Authenticate": 'Bearer realm="mrc-refresh-mcp"'}
+
         auth = request.headers.get("authorization", "")
         if not auth.lower().startswith("bearer "):
-            return JSONResponse({"error": "missing bearer token"}, status_code=401)
+            return JSONResponse(
+                {"error": "missing bearer token"},
+                status_code=401,
+                headers=challenge,
+            )
 
         token = auth[7:].strip()
         contractor = load_tokens().get(token)
         if not contractor:
             client_host = request.client.host if request.client else "?"
             LOG.info("rejected token from %s", client_host)
-            return JSONResponse({"error": "invalid token"}, status_code=401)
+            return JSONResponse(
+                {"error": "invalid token"},
+                status_code=401,
+                headers=challenge,
+            )
 
         token_ctx = current_contractor.set(contractor)
         try:
