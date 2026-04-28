@@ -57,7 +57,7 @@ Prints a token like `Hh3vL...PqZ9`. Copy it once and share via 1Password (one-ti
 Contractor adds a remote MCP server in Claude Desktop:
 
 - **Name:** `mrc-refresh`
-- **URL:** `https://mcp.markroberts.io/mcp/`  *(trailing slash matters; the bare domain redirects here)*
+- **URL:** `https://mcp.markroberts.io/mcp`  *(no trailing slash — Anthropic's connector validator does not follow redirects on the protocol endpoint, and FastMCP's canonical path is `/mcp` exactly)*
 - **Auth header:** `Authorization: Bearer <their-token>`
 
 After the connector is added, they can say things like "refresh canoefp" or "list available sites" and Claude will call the appropriate tool.

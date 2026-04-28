@@ -15,6 +15,7 @@ Run via systemd; behind Caddy for TLS.
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import logging
 import os
 import re
@@ -192,10 +193,23 @@ async def healthz(request: Request) -> PlainTextResponse:
 
 mcp_app = mcp.streamable_http_app()
 
+
+@contextlib.asynccontextmanager
+async def lifespan(_app):
+    """FastMCP's streamable HTTP transport runs its session manager inside
+    an async task group. When you Mount the FastMCP app inside a parent
+    Starlette app, the parent's lifespan has to enter that context — otherwise
+    every POST raises 'Task group is not initialized'.
+    """
+    async with mcp.session_manager.run():
+        yield
+
+
 app = Starlette(
     routes=[
         Route("/healthz", healthz, methods=["GET"]),
         Mount("/", app=mcp_app),
     ],
     middleware=[Middleware(BearerAuthMiddleware)],
+    lifespan=lifespan,
 )

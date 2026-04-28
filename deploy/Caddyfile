@@ -1,7 +1,9 @@
 mcp.markroberts.io {
 	# Help users who configure the connector with the bare domain — the actual
-	# MCP transport lives at /mcp/. Permanent so clients cache it.
-	redir / /mcp/ permanent
+	# MCP transport lives at /mcp (no trailing slash; that's the canonical
+	# FastMCP path, and Anthropic's connector validator does NOT follow
+	# redirects on the protocol endpoint, so we must point at the exact path).
+	redir / /mcp permanent
 
 	# Generous timeouts: a full refresh can take 10+ minutes on first pull.
 	reverse_proxy 127.0.0.1:8765 {
