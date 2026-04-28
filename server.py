@@ -87,7 +87,19 @@ class BearerAuthMiddleware(BaseHTTPMiddleware):
     """
 
     async def dispatch(self, request: Request, call_next):
-        if request.url.path == "/healthz":
+        path = request.url.path
+
+        # Healthz is intentionally public for ops monitoring.
+        if path == "/healthz":
+            return await call_next(request)
+
+        # OAuth 2.0 discovery / dynamic client registration probes (RFC 8414,
+        # RFC 9728, RFC 7591). Anthropic's connector validator probes these
+        # before deciding how to authenticate. If we 401 them, it concludes
+        # "OAuth is configured here but I can't reach it" and gives up. By
+        # passing through, Starlette returns 404 for paths we don't define,
+        # signalling "no OAuth here, fall back to bearer."
+        if path.startswith("/.well-known/") or path == "/register":
             return await call_next(request)
 
         # Per RFC 6750: a Bearer-protected resource MUST advertise the scheme
