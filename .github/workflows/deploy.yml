@@ -33,6 +33,11 @@ jobs:
               sudo /usr/bin/install -m 0644 deploy/Caddyfile /etc/caddy/Caddyfile
               sudo /bin/systemctl reload caddy
             fi
+            # Sync systemd unit if it changed; daemon-reload picks up the new file.
+            if ! sudo /usr/bin/cmp -s deploy/mrc-refresh-mcp.service /etc/systemd/system/mrc-refresh-mcp.service; then
+              sudo /usr/bin/install -m 0644 deploy/mrc-refresh-mcp.service /etc/systemd/system/mrc-refresh-mcp.service
+              sudo /bin/systemctl daemon-reload
+            fi
             sudo /bin/systemctl restart mrc-refresh-mcp
             sleep 2
             sudo /bin/systemctl is-active --quiet mrc-refresh-mcp
