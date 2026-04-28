@@ -25,6 +25,7 @@ from pathlib import Path
 
 import yaml
 from mcp.server.fastmcp import Context, FastMCP
+from mcp.server.transport_security import TransportSecuritySettings
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.middleware.base import BaseHTTPMiddleware
@@ -120,7 +121,16 @@ class BearerAuthMiddleware(BaseHTTPMiddleware):
             current_contractor.reset(token_ctx)
 
 
-mcp = FastMCP("mrc-refresh")
+# Hosts allowed in the request's Host header. FastMCP's DNS-rebinding
+# protection rejects anything not in this list with HTTP 421. Override at
+# deploy time via MCP_ALLOWED_HOSTS (comma-separated) — useful for staging.
+_default_hosts = "mcp.markroberts.io,127.0.0.1:8765,127.0.0.1,localhost:8765,localhost"
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get("MCP_ALLOWED_HOSTS", _default_hosts).split(",") if h.strip()]
+
+mcp = FastMCP(
+    "mrc-refresh",
+    transport_security=TransportSecuritySettings(allowed_hosts=ALLOWED_HOSTS),
+)
 
 
 @mcp.tool()
