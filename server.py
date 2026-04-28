@@ -33,7 +33,7 @@ from mcp.server.fastmcp import Context, FastMCP
 from mcp.server.transport_security import TransportSecuritySettings
 from starlette.applications import Starlette
 from starlette.requests import Request
-from starlette.responses import HTMLResponse, PlainTextResponse, RedirectResponse
+from starlette.responses import HTMLResponse, JSONResponse, PlainTextResponse, RedirectResponse
 from starlette.routing import Mount, Route
 
 from oauth_provider import MRCOAuthProvider
@@ -195,6 +195,20 @@ async def healthz(request: Request) -> PlainTextResponse:
     return PlainTextResponse("ok\n")
 
 
+async def oauth_protected_resource_mcp(request: Request) -> JSONResponse:
+    """RFC 9728 resource-specific protected-resource metadata for the /mcp
+    endpoint. FastMCP only registers the suffix-less /.well-known/oauth-
+    protected-resource path; Anthropic's connector probes both, so we
+    serve the resource-specific variant ourselves."""
+    return JSONResponse(
+        {
+            "resource": f"{PUBLIC_BASE_URL}/mcp",
+            "authorization_servers": [f"{PUBLIC_BASE_URL}/"],
+            "bearer_methods_supported": ["header"],
+        }
+    )
+
+
 # -- /auth/login: contractor pastes their bearer token, we issue an OAuth
 # auth code and redirect back to Anthropic's connector callback. --------
 
@@ -314,6 +328,11 @@ async def lifespan(_app):
 app = Starlette(
     routes=[
         Route("/healthz", healthz, methods=["GET"]),
+        Route(
+            "/.well-known/oauth-protected-resource/mcp",
+            oauth_protected_resource_mcp,
+            methods=["GET"],
+        ),
         Route("/auth/login", auth_login_get, methods=["GET"]),
         Route("/auth/login", auth_login_post, methods=["POST"]),
         Mount("/", app=mcp_app),
