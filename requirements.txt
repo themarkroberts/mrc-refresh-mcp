@@ -1,3 +1,4 @@
 mcp>=1.2.0
 uvicorn>=0.30.0
 PyYAML>=6.0
+python-multipart>=0.0.9
